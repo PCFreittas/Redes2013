@@ -10,4 +10,10 @@ package Interfaces;
  */
 public interface ReliableUnicastServiceUserInterface {
     
+    // Notificação
+    public void RUDataInd(String Origem, String Mensagem);
+    
+    // Confirmação
+    public void RUDataInd();
+    
 }
