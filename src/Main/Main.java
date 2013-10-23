@@ -2,13 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package redes2013;
+package Main;
 
 /**
  *
- * @author Pedro Cesar
+ * @aqwqwquthor Pedro Cesar
  */
-public class Redes2013 {
+public class Main {
 
     /**
      * @param args the command line arguments
