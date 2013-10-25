@@ -11,9 +11,17 @@ package Interfaces;
 public interface ReliableUnicastServiceUserInterface {
     
     // Notificação
-    public void RUDataInd(String Origem, String Mensagem);
+    /**
+     *
+     * @param source   Entidade de Origem
+     * @param message  Mensagem
+     */
+    public void RUDataInd(short source, String message);
     
     // Confirmação
     public void RUDataInd();
+    
+    
+    
     
 }
