@@ -13,9 +13,7 @@ public class Main {
      */
     public static void main(String[] args) throws FileNotFoundException {
         ReliableUnicastProtocol RUP = new ReliableUnicastProtocol();
-        boolean LoadConfigFile = RUP.LoadConfigFile();
-        
-        
-        
+        RUP.run();
+                        
     }
 }
