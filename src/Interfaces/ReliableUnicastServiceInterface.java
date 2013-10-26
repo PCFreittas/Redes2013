@@ -11,12 +11,13 @@ package Interfaces;
 public interface ReliableUnicastServiceInterface {
     
     /**
-     * Envia mensagem para um usuário do serviço de transferência confiável
+     * Envia uma mensagem para um destinatário específico, via UDP.
      * 
-     * @param entDest  --> Entidade de Destino
-     * @param mensagem --> Mensagem
-     * @return
-     */
-    public boolean RUDataReq(Short entDest,String mensagem);
+     * @param destination   número de ID, conforme está no arquivo config.txt.
+     * @param message       mensagem a ser enviada
+     * @return              true caso a mensagem conseguir ser enviada ou false
+     * se não conseguir
+     */ 
+    public boolean RUDataReq(short destination, String message);
     
 }

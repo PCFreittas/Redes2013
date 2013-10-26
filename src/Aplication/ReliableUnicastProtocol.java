@@ -14,42 +14,60 @@ import java.util.ArrayList;
  * @author Pedro César
  */
 public class ReliableUnicastProtocol implements Interfaces.ReliableUnicastServiceInterface {
-    private boolean             activeThread;
-    private String              fileName = "config.txt";
-    private ArrayList<Integer>  config_ID = new ArrayList<>();
-    private ArrayList<String>   config_IP = new ArrayList<>();
-    private ArrayList<Integer>  config_PT = new ArrayList<>();
     
+    private boolean                 activeThread;                               // True     Thread ativa
+    private String                  fileName = "config.txt";                    // Arquivo config.txt
+    private ArrayList<Integer>      config_NroID = new ArrayList<>();           // ID       type Integer
+    private ArrayList<String>       config_StrIP = new ArrayList<>();           // IP       type String
+    private ArrayList<Integer>      config_NroPT = new ArrayList<>();           // Porta    type Integer
+    private ArrayList<InetAddress>  config_IAdIP = new ArrayList<>();           // IP       type InetAdress
+    
+    /**
+     * 
+     */
     public void run(){
         activeThread = true;
         while(activeThread){
 
         }   
     }
-    
+    /**
+     * Envia uma mensagem para um destinatário específico, via UDP.
+     * 
+     * @param destination   número de ID, conforme está no arquivo config.txt.
+     * @param message       mensagem a ser enviada
+     * @return              true se a mensagem conseguiu ser enviada
+     */    
     @Override
-    public boolean RUDataReq(Short entDest, String mensagem) {
+    public boolean RUDataReq(short destination, String message) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
- 
+    /**
+     * Lê um arquivo de configuração chamado config.txt e aloca seus dados as
+     * variáveis: config_NroID (tipo Integer, com nro do destinatário), config_StrIP
+     * (tipo String, com o IP do destinatário), config_PT (tipo Integer, com o
+     * nro da porta do destinatário).
+     * 
+     * @return  true se o arquivo foi lido com sucesso
+     * @throws FileNotFoundException 
+     */
     public boolean LoadConfigFile() throws FileNotFoundException{
-        //
-
-        // 
+         
         try{
             BufferedReader file = new BufferedReader(new FileReader(fileName));
             
             while(file.ready()){
                 String[] leu = (file.readLine()).split(" ");
-                config_ID.add(Integer.parseInt(leu[0]));
-                config_IP.add(leu[1]);
-                config_PT.add(Integer.parseInt(leu[2]));                
+                config_NroID.add(Integer.parseInt(leu[0]));
+                config_StrIP.add(leu[1]);
+                config_IAdIP.add(StringToInet(leu[1]));
+                config_NroPT.add(Integer.parseInt(leu[2]));                
             }
             
             file.close();
             
-            for(int i=0; i<config_ID.size(); i++){
-                System.out.println(config_ID.get(i) + " " + config_IP.get(i) + " " + config_PT.get(i));
+            for(int i=0; i<config_NroID.size(); i++){
+                System.out.println(config_NroID.get(i) + " " + config_StrIP.get(i) + " " + config_NroPT.get(i));
             }
             
             return true;
