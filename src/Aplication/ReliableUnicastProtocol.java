@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -15,32 +17,64 @@ import java.util.ArrayList;
  */
 public class ReliableUnicastProtocol implements Interfaces.ReliableUnicastServiceInterface {
     
-    private boolean                 activeThread;                               // True     Thread ativa
+    
     private String                  fileName = "config.txt";                    // Arquivo config.txt
-    private ArrayList<Integer>      config_NroID = new ArrayList<>();           // ID       type Integer
-    private ArrayList<String>       config_StrIP = new ArrayList<>();           // IP       type String
-    private ArrayList<Integer>      config_NroPT = new ArrayList<>();           // Porta    type Integer
-    private ArrayList<InetAddress>  config_IAdIP = new ArrayList<>();           // IP       type InetAdress
+    
+    private ArrayList<Integer>      tableDest_NroID = new ArrayList<>();        // ID       type Integer
+    private ArrayList<String>       tableDest_StrIP = new ArrayList<>();        // IP       type String
+    private ArrayList<Integer>      tableDest_NroPT = new ArrayList<>();        // Porta    type Integer
+    private ArrayList<InetAddress>  tableDest_IAdIP = new ArrayList<>();        // IP       type InetAdress
+    
+    private boolean                 activeThread    = false;
+    private Integer                 activeTableDest = null;
     
     /**
      * 
      */
-    public void run(){
+    public void run() throws FileNotFoundException{
+        
+        if( LoadConfigFile() == false){
+            System.err.println("Erro ao carregar o arquivo config.txt");
+            System.exit(0);
+        }
         activeThread = true;
         while(activeThread){
 
-        }   
+        }
     }
     /**
      * Envia uma mensagem para um destinatário específico, via UDP.
      * 
-     * @param destination   número de ID, conforme está no arquivo config.txt.
-     * @param message       mensagem a ser enviada
-     * @return              true se a mensagem conseguiu ser enviada
+     * @param destination   Número de ID, conforme está no arquivo config.txt.
+     * @param message       Mensagem a ser enviada
+     * @return              Verdadeiro, caso a mensagem conseguiu ser enviada
      */    
     @Override
     public boolean RUDataReq(short destination, String message) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // Verifica se destination contém um valor válido
+        if (FindID(destination) == true){
+            try{
+                byte[] buf = message.getBytes();
+                DatagramSocket datagram = new DatagramSocket();
+                DatagramPacket reqPacket = new DatagramPacket(
+                        buf,
+                        buf.length,
+                        tableDest_IAdIP.get(activeTableDest),
+                        tableDest_NroPT.get(activeTableDest)
+                        );
+                // Envia o datagrama
+                datagram.send(reqPacket);
+                // Fecha o datagrama
+                datagram.close();
+                return true;
+            
+            } catch(IOException e){
+            System.err.println("Erro: " + e);
+        }
+        }else{
+            System.err.println("Erro: Nro de Destino não encontrado");
+        }
+        return false;
     }
     /**
      * Lê um arquivo de configuração chamado config.txt e aloca seus dados as
@@ -51,28 +85,22 @@ public class ReliableUnicastProtocol implements Interfaces.ReliableUnicastServic
      * @return  true se o arquivo foi lido com sucesso
      * @throws FileNotFoundException 
      */
-    public boolean LoadConfigFile() throws FileNotFoundException{
+    private boolean LoadConfigFile() throws FileNotFoundException{
          
         try{
             BufferedReader file = new BufferedReader(new FileReader(fileName));
             
             while(file.ready()){
                 String[] leu = (file.readLine()).split(" ");
-                config_NroID.add(Integer.parseInt(leu[0]));
-                config_StrIP.add(leu[1]);
-                config_IAdIP.add(StringToInet(leu[1]));
-                config_NroPT.add(Integer.parseInt(leu[2]));                
-            }
-            
-            file.close();
-            
-            for(int i=0; i<config_NroID.size(); i++){
-                System.out.println(config_NroID.get(i) + " " + config_StrIP.get(i) + " " + config_NroPT.get(i));
-            }
-            
+                tableDest_NroID.add(Integer.parseInt(leu[0]));
+                tableDest_StrIP.add(leu[1]);
+                tableDest_IAdIP.add(StringToInet(leu[1]));
+                tableDest_NroPT.add(Integer.parseInt(leu[2]));                
+            }    
+            file.close();            
             return true;
-        }catch(IOException e){System.out.println("Erro ao ler o arquivo: config.txt");}
         
+        }catch(IOException e){System.out.println("Erro:" + e);}
         return false;
     }
     
@@ -95,5 +123,21 @@ public class ReliableUnicastProtocol implements Interfaces.ReliableUnicastServic
             catch(UnknownHostException uHex){}
         }
         return outInet;
+    }
+    
+    /**
+     * Busca na tabela de endereços um ID
+     * @param destination
+     * @return boolean 
+     */
+    private boolean FindID(short destination){
+        int i;
+        for(i=0; i<tableDest_NroID.size(); i++){
+            if(tableDest_NroID.get(i) == destination){
+                activeTableDest = i;
+                return true;
+            }
+        }
+        return false;
     }
 }
