@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
  *
  * @author Pedro Cesar
  */
-public class TestAplication implements Interfaces.ReliableUnicastServiceUserInterface{
+public class TestAplication implements Interface.ReliableUnicastServiceUserInterface{
 
     @Override
     public void RUDataInd(short source, String message) {

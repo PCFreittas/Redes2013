@@ -15,7 +15,7 @@ import java.util.ArrayList;
  *
  * @author Pedro César
  */
-public class ReliableUnicastProtocol implements Interfaces.ReliableUnicastServiceInterface {
+public class ReliableUnicastProtocol implements Interface.ReliableUnicastServiceInterface {
     
     
     private String                  fileName = "config.txt";                    // Arquivo config.txt
