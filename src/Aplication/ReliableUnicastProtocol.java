@@ -10,13 +10,11 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-
 /**
  *
  * @author Pedro César
  */
-public class ReliableUnicastProtocol implements Interface.ReliableUnicastServiceInterface {
-    
+public class ReliableUnicastProtocol extends Thread implements Interface.ReliableUnicastServiceInterface {
     
     private String                  fileName = "config.txt";                    // Arquivo config.txt
     
@@ -27,21 +25,7 @@ public class ReliableUnicastProtocol implements Interface.ReliableUnicastService
     
     private boolean                 activeThread    = false;
     private Integer                 activeTableDest = null;
-    
-    /**
-     * 
-     */
-    public void run() throws FileNotFoundException{
-        
-        if( LoadConfigFile() == false){
-            System.err.println("Erro ao carregar o arquivo config.txt");
-            System.exit(0);
-        }
-        activeThread = true;
-        while(activeThread){
 
-        }
-    }
     /**
      * Envia uma mensagem para um destinatário específico, via UDP.
      * 
@@ -85,7 +69,27 @@ public class ReliableUnicastProtocol implements Interface.ReliableUnicastService
      * @return  true se o arquivo foi lido com sucesso
      * @throws FileNotFoundException 
      */
-    private boolean LoadConfigFile() throws FileNotFoundException{
+    
+    
+    
+    public void ListTableDest(){
+        
+        
+        System.out.println("\nTabela de configuração");
+        System.out.println("===========================================");
+        
+        for(int i=0;i<tableDest_NroID.size();i++){
+            
+            System.out.print("ID: "    + tableDest_NroID.get(i) + "\t");
+            System.out.print("IP: "    + tableDest_StrIP.get(i) + "\t");
+            if(tableDest_StrIP.get(i).length()<12){System.out.print("\t");}
+            System.out.print("Porta: " + tableDest_NroPT.get(i));
+            System.out.println("");
+        }
+        System.out.println("===========================================");
+    }
+    
+    public void LoadConfigFile() throws FileNotFoundException{
          
         try{
             BufferedReader file = new BufferedReader(new FileReader(fileName));
@@ -98,10 +102,7 @@ public class ReliableUnicastProtocol implements Interface.ReliableUnicastService
                 tableDest_NroPT.add(Integer.parseInt(leu[2]));                
             }    
             file.close();            
-            return true;
-        
         }catch(IOException e){System.out.println("Erro:" + e);}
-        return false;
     }
     
     /**
